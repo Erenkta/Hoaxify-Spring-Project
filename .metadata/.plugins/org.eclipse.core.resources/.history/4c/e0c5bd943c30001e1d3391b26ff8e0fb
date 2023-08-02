@@ -1,0 +1,27 @@
+package com.hoaxify.ws.configuration;
+
+import java.io.IOException;
+
+import org.springframework.data.domain.Page;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.hoaxify.ws.user.User;
+
+public class PageSerializer extends JsonSerializer<Page<User>>{ //JSON serializer işlemini yapıcaz
+
+	@Override
+	public void serialize(Page<User> value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+		gen.writeStartObject();
+		gen.writeFieldName("content");
+		serializers.defaultSerializeValue(value.getContent(),gen);
+		
+		gen.writeObjectField("pageable",value.getPageable());
+		gen.writeBooleanField("last",value.isLast());
+		gen.writeNumberField("totalPages", value.getTotalPages());
+		gen.writeNumberField("totalElement",value.getTotalElements());
+		
+	} 
+
+}

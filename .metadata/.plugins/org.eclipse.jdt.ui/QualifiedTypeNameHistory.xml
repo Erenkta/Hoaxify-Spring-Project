@@ -1,2 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="com.hoaxify.ws.user.UserController"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.GetMapping"/>
+    <fullyQualifiedTypeName name="lombok.ToString"/>
+    <fullyQualifiedTypeName name="com.hoaxify.ws.shared.Views"/>
+    <fullyQualifiedTypeName name="com.hoaxify.ws.shared.Views.Base"/>
+    <fullyQualifiedTypeName name="com.fasterxml.jackson.annotation.JsonView"/>
+    <fullyQualifiedTypeName name="org.springframework.data.domain.PageRequest"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.RequestParam"/>
+    <fullyQualifiedTypeName name="com.fasterxml.jackson.annotation.JsonIgnore"/>
+    <fullyQualifiedTypeName name="com.fasterxml.jackson.databind.JsonSerializer"/>
+    <fullyQualifiedTypeName name="org.springframework.boot.jackson.JsonComponent"/>
+    <fullyQualifiedTypeName name="org.springframework.data.domain.Page"/>
+    <fullyQualifiedTypeName name="org.springframework.data.domain.Pageable"/>
+    <fullyQualifiedTypeName name="org.springframework.data.jpa.repository.Query"/>
+    <fullyQualifiedTypeName name="com.hoaxify.ws.user.UserProjection"/>
+    <fullyQualifiedTypeName name="lombok.Data"/>
+    <fullyQualifiedTypeName name="org.apache.catalina.User"/>
+    <fullyQualifiedTypeName name="com.hoaxify.ws.user.User"/>
+    <fullyQualifiedTypeName name="com.hoaxify.ws.user.vm.UserVM"/>
+    <fullyQualifiedTypeName name="com.hoaxify.ws.shared.CurrentUser"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+</qualifiedTypeNameHistroy>
