@@ -29,11 +29,12 @@ public class UserService {
 		}
 		return userRepository.findAll(page); 
 	}
-	
 	public User getByUsername(String username) {
 		User userInDB = userRepository.findByUsername(username);
-		if(userInDB == null) {
-			throw new NotFoundException();
+		try {
+			
+		}catch (NotFoundException e) {
+			throw e;
 		}
 		return userInDB;
 	}
