@@ -41,8 +41,7 @@ public class UserController {
 
 	@GetMapping("users/{username}")
 	public UserVM getUser(@PathVariable String username) {
-		User user =userService.getByUsername(username); //Bu service'i başka yerlerde de kullanabiliriz ondan VM kullanmasak daha iyi olur
-		return new UserVM(user);
+		User user = return userService.getByUsername();
 		
 	}
 
