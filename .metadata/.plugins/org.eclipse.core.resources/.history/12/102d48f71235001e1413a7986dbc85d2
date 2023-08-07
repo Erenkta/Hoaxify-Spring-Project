@@ -1,0 +1,6 @@
+package com.hoaxify.ws.configuration;
+
+@Data
+public class AppConfiguration {
+	private String uploadPath;
+}
