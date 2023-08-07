@@ -46,7 +46,6 @@ public class User implements UserDetails{
 
 	private String password;
 	
-	@Lob //Large Object 
 	private String image;
 
 	@Override

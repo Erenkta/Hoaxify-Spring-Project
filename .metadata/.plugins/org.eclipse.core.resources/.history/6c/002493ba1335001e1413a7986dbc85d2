@@ -1,0 +1,37 @@
+package com.hoaxify.ws.file;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.Base64;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hoaxify.ws.configuration.AppConfiguration;
+
+@Service
+public class FileService {
+	
+	/*@Value("${upload-path}") //Applicationç.yaml içerisinden otomatijk olarak çekecek
+	String uploadPath; 
+	*/ //Bunu yapmak yerine altta kendimizin oluşturduğu bir class sayesinde yaptık
+	
+	@Autowired
+	AppConfiguration appConfiguration;
+	public String writeBase64ToFile(String image) throws Exception {
+		String fileName = generateRandomName();
+		File target = new File(appConfiguration.getUploadPath()+"/"+fileName);
+		OutputStream outputStream = new FileOutputStream(target);
+		
+		byte[] base64Encoded = Base64.getDecoder().decode(image);
+		outputStream.write(base64Encoded);
+		outputStream.close();
+		return fileName;
+	}
+	
+	public String generateRandomName() {
+		return UUID.randomUUID().toString().replaceAll("-",""); // - Kullanarak oluşturduğu random karakterleri biz kaldırdık
+	}
+}

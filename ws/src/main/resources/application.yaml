@@ -1,7 +1,14 @@
 #spring:
 #  datasource:
-#    url: jdbc:h2:./devdb#  jpa:#    hibernate:#      ddl-auto: update
-spring:  jpa:    properties:      javax:
+#    url: jdbc:h2:./devdb
+#    username: sa
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+spring:
+  jpa:
+    properties:
+      javax:
         persistence:
           validation:
             mode: none
@@ -12,3 +19,18 @@ spring:  jpa:    properties:      javax:
         size-parameter: pageSize #Custom değişkenler verdik 
         default-page-size: 10
         max-page-size: 100
+
+  profiles:
+    active:
+      - dev
+---
+spring:
+  profiles:
+     production
+hoaxify:
+  upload-path: storage-production
+---
+spring:
+  profiles: dev
+hoaxify:
+  upload-path: storage-dev

@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hoaxify.ws.error.NotFoundException;
+import com.hoaxify.ws.file.FileService;
 import com.hoaxify.ws.user.vm.UserUpdateVM;
 
 @Service
@@ -15,9 +16,12 @@ public class UserService {
 	
 	PasswordEncoder passwordEncoder;
 	
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+	FileService fileService;
+	
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,FileService fileService) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.fileService = fileService ;
 	}
 
 	public void save(User user) {
@@ -39,11 +43,20 @@ public class UserService {
 		return userInDB;
 	}
 
-	public User updateUser(String username, UserUpdateVM updatedUser) {
+	public User updateUser(String username, UserUpdateVM updatedUser) throws Exception {
 		User userInDB = userRepository.findByUsername(username);
+		if(updatedUser.getImage() != null) {
+			String oldImageName = userInDB.getImage();
+			//userInDB.setImage(updatedUser.getImage());
+			String storedFileName = fileService.writeBase64ToFile(updatedUser.getImage());
+			userInDB.setImage(storedFileName);
+			fileService.deleteFile(oldImageName);
+		}
 		userInDB.setDisplayName(updatedUser.getDisplayName());
 		return userRepository.save(userInDB); //üstüne yazdı
 		
 	}
+
+
 
 }
