@@ -1,0 +1,10 @@
+package com.hoaxify.ws.hoax;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class HoaxService {
+
+	
+	HoaxRepository hoaxRepository;
+}

@@ -1,0 +1,7 @@
+package com.hoaxify.ws.hoax;
+
+
+@RestController()
+public class HoaxController {
+
+}
