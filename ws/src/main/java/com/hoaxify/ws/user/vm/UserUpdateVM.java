@@ -3,7 +3,7 @@ package com.hoaxify.ws.user.vm;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.hoaxify.ws.shared.ProfileImage;
+import com.hoaxify.ws.shared.FileType;
 
 import lombok.Data;
 
@@ -15,7 +15,7 @@ public class UserUpdateVM {
 	private String displayName;
 	
 	
-	@ProfileImage
+	@FileType(types = {"jpeg","png"})
 	private String image;
 	
 }
