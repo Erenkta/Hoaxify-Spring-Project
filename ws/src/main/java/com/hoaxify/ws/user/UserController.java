@@ -50,7 +50,7 @@ public class UserController {
 	}
 	@PutMapping("users/{username}")
 	@PreAuthorize("#username == principal.username") // SpEl ile yazacağız
-	UserVM updateUser(@RequestBody UserUpdateVM updatedUser,@PathVariable String username ) throws Exception {
+	UserVM updateUser(@Valid @RequestBody UserUpdateVM updatedUser,@PathVariable String username ) throws Exception {
 		User user = userService.updateUser(username,updatedUser);
 		return new UserVM(user);
 	}

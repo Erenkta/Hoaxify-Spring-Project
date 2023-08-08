@@ -2,15 +2,16 @@ package com.hoaxify.ws.file;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.UUID;
 
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.hoaxify.ws.configuration.AppConfiguration;
 
 @Service
@@ -20,14 +21,31 @@ public class FileService {
 	String uploadPath; 
 	*/ //Bunu yapmak yerine altta kendimizin oluşturduğu bir class sayesinde yaptık
 	
-	@Autowired
+
 	AppConfiguration appConfiguration;
+	
+	Tika tika; //Dosya tipi için bir framework
+	
+	@Autowired
+	public FileService(AppConfiguration appConfiguration) {
+		super();
+		this.appConfiguration = appConfiguration;
+		this.tika = new Tika();
+	}
+
 	public String writeBase64ToFile(String image) throws Exception {
+		
+		
 		String fileName = generateRandomName();
 		File target = new File(appConfiguration.getUploadPath()+"/"+fileName);
 		OutputStream outputStream = new FileOutputStream(target);
 		
 		byte[] base64Encoded = Base64.getDecoder().decode(image);
+		
+
+		
+		
+		
 		outputStream.write(base64Encoded);
 		outputStream.close();
 		return fileName;
@@ -43,6 +61,14 @@ public class FileService {
 		}
 		//String oldPath = appConfiguration.getUploadPath() + "/" + oldImageName; bunu direkt verebiliriz ya da
 		Files.deleteIfExists(Paths.get(appConfiguration.getUploadPath(),oldImageName)); //şeklinde de olur
+		
+	}
+
+	public String detectType(String value) {
+		byte[] base64Encoded = Base64.getDecoder().decode(value);
+	
+
+		return tika.detect(base64Encoded);
 		
 	}
 }
