@@ -1,9 +1,0 @@
-package com.hoaxify.ws.configuration;
-
-import org.springframework.data.domain.Page;
-
-import com.fasterxml.jackson.databind.JsonSerializer;
-
-public class PageSerializer extends JsonSerializer<Page<User>>{ //
-
-}

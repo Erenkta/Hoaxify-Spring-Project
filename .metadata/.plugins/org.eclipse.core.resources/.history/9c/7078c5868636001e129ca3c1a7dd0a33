@@ -1,0 +1,8 @@
+package com.hoaxify.ws.hoax.vm;
+
+import lombok.Data;
+
+@Data
+public class HoaxVM {
+	private int id;
+}

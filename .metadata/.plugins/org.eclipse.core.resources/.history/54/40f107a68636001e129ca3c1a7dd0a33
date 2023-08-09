@@ -1,0 +1,12 @@
+package com.hoaxify.ws.hoax.vm;
+
+import java.util.Date;
+
+import lombok.Data;
+
+@Data
+public class HoaxVM {
+	private int id;
+	private String content;
+	private Date timestamp;
+}

@@ -1,0 +1,26 @@
+package com.hoaxify.ws.hoax;
+
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+
+import com.hoaxify.ws.hoax.vm.HoaxVM;
+
+@Service
+public class HoaxService {
+
+	@Autowired
+	HoaxRepository hoaxRepository;
+
+	public void save(Hoax hoax) {
+		hoax.setTimestamp(new Date());
+		hoaxRepository.save(hoax);	
+	}
+
+	public Page<HoaxVM> getHoaxes(Page page) {
+		// TODO Auto-generated method stub
+		return hoaxRepository.findAll(page);
+	}
+}
