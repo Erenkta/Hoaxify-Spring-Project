@@ -1,15 +1,0 @@
-#spring:
-#  datasource:
-#    url: jdbc:h2:./devdb#  jpa:#    hibernate:#      ddl-auto: update
-spring:  jpa:    properties:      javax:
-        persistence:
-          validation:
-            mode: none
-            
-  data:
-    web:
-      pageable:
-        page-parameter: currentPage
-        size-parameter: pageSize #Custom değişkenler verdik 
-        default-page-size: 10
-        max-page-size: 100

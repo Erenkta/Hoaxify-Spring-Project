@@ -1,7 +1,0 @@
-package com.hoaxify.ws.user.vm;
-
-public class UserVM {
-	private String username;
-	private String displayName;
-	private String image;
-}
