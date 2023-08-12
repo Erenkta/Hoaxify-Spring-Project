@@ -41,9 +41,17 @@ public class HoaxController {
 	Page<HoaxVM> getHoaxes(@PageableDefault(sort="id",direction = Direction.DESC) Pageable page){ //Bazı page parametreleri için default değerler set etmek istersek bu annotation'u kullanıyoruz
 		return hoaxService.getHoaxes(page).map(HoaxVM::new);
 	}
+	@GetMapping("/hoaxes/{id:[0-9]+}")
+	Page<HoaxVM> getHoaxesRelative(@PathVariable long id,@PageableDefault(sort="id",direction = Direction.DESC) Pageable page){ //Bazı page parametreleri için default değerler set etmek istersek bu annotation'u kullanıyoruz
+		return hoaxService.getOldHoaxes(id,page).map(HoaxVM::new);
+	}
 	
 	@GetMapping("users/{username}/hoaxes")
-	Page<HoaxVM> getHoaxes(@PathVariable String username,@PageableDefault(sort="id",direction = Direction.DESC) Pageable page){ //Bazı page parametreleri için default değerler set etmek istersek bu annotation'u kullanıyoruz
+	Page<HoaxVM> getUserHoaxes(@PathVariable String username,@PageableDefault(sort="id",direction = Direction.DESC) Pageable page){ //Bazı page parametreleri için default değerler set etmek istersek bu annotation'u kullanıyoruz
 		return hoaxService.getUserHoax(username,page).map(HoaxVM::new);
+	}
+	@GetMapping("users/{username}/hoaxes/{id:[0-9]+}")
+	Page<HoaxVM> getUserHoaxesRelative(@PathVariable long id,@PathVariable String username,@PageableDefault(sort="id",direction = Direction.DESC) Pageable page){ //Bazı page parametreleri için default değerler set etmek istersek bu annotation'u kullanıyoruz
+		return hoaxService.getOldUserHoax(id,username,page).map(HoaxVM::new);
 	}
 }
