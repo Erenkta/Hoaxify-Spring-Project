@@ -48,7 +48,7 @@ public class UserService {
 		if(updatedUser.getImage() != null) {
 			String oldImageName = userInDB.getImage();
 			//userInDB.setImage(updatedUser.getImage());
-			String storedFileName = fileService.writeBase64ToFile(updatedUser.getImage());
+			String storedFileName = fileService.writeBase64EncodedStringToFile(updatedUser.getImage());
 			userInDB.setImage(storedFileName);
 			fileService.deleteFile(oldImageName);
 		}

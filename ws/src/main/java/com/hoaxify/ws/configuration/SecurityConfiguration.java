@@ -27,10 +27,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		http.headers().frameOptions().disable();
 		
 		http
-			.authorizeRequests()
+			.authorizeRequests() // Aşağıdaki pathlerin auth olmadan çalışmasını yasaklayar
 				.antMatchers(HttpMethod.POST, "/api/1.0/auth").authenticated()
 				.antMatchers(HttpMethod.PUT, "/api/1.0/users/{username}").authenticated()
 				.antMatchers(HttpMethod.POST, "/api/1.0/hoaxes").authenticated() //login olmadan yapılan işlemleri engeller
+				.antMatchers(HttpMethod.POST, "/api/1.0/hoax-attachment").authenticated() 
 
 			.and()
 			.authorizeRequests().anyRequest().permitAll();

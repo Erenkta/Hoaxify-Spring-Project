@@ -1,0 +1,13 @@
+package com.hoaxify.ws.file;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class FileCleanupService {
+	@Autowired
+	FileAttachmentRepository fileAttachmentRepository;
+	public void cleanupStorage() { //Database kaydedilmiş fakat herhangi bir hoax'a ait olmayan file'ları silme işlemi
+		
+	}
+}
