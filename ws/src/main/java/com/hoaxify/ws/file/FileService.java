@@ -2,73 +2,83 @@ package com.hoaxify.ws.file;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.Date;
 import java.util.UUID;
 
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.hoaxify.ws.configuration.AppConfiguration;
 
 @Service
 public class FileService {
 	
-	/*@Value("${upload-path}") //Applicationç.yaml içerisinden otomatijk olarak çekecek
-	String uploadPath; 
-	*/ //Bunu yapmak yerine altta kendimizin oluşturduğu bir class sayesinde yaptık
-	
-
 	AppConfiguration appConfiguration;
 	
-	Tika tika; //Dosya tipi için bir framework
+	Tika tika;
 	
+	FileAttachmentRepository fileAttachmentRepository;
 	@Autowired
-	public FileService(AppConfiguration appConfiguration) {
+	public FileService(AppConfiguration appConfiguration,FileAttachmentRepository fileAttachmentRepository) {
 		super();
 		this.appConfiguration = appConfiguration;
 		this.tika = new Tika();
+		this.fileAttachmentRepository = fileAttachmentRepository;
 	}
-
-	public String writeBase64ToFile(String image) throws Exception {
-		
-		
+	
+	public String writeBase64EncodedStringToFile(String image) throws IOException {
 		String fileName = generateRandomName();
-		File target = new File(appConfiguration.getUploadPath()+"/"+fileName);
+		File target = new File(appConfiguration.getUploadPath() + "/" + fileName);
 		OutputStream outputStream = new FileOutputStream(target);
 		
-		byte[] base64Encoded = Base64.getDecoder().decode(image);
-		
-
-		
-		
-		
-		outputStream.write(base64Encoded);
+		byte[] base64encoded = Base64.getDecoder().decode(image);
+				
+		outputStream.write(base64encoded);
 		outputStream.close();
 		return fileName;
 	}
 	
 	public String generateRandomName() {
-		return UUID.randomUUID().toString().replaceAll("-",""); // - Kullanarak oluşturduğu random karakterleri biz kaldırdık
+		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
-	public void deleteFile(String oldImageName) throws Exception {
-		if(oldImageName == null) { //eğer eski fotosu yoksa yani daha önceden hiç foto koymamış olabilir ondan bunu yaptık
+	public void deleteFile(String oldImageName) {
+		if(oldImageName == null) {
 			return;
 		}
-		//String oldPath = appConfiguration.getUploadPath() + "/" + oldImageName; bunu direkt verebiliriz ya da
-		Files.deleteIfExists(Paths.get(appConfiguration.getUploadPath(),oldImageName)); //şeklinde de olur
-		
+		try {
+			Files.deleteIfExists(Paths.get(appConfiguration.getUploadPath(), oldImageName));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String detectType(String value) {
-		byte[] base64Encoded = Base64.getDecoder().decode(value);
-	
-
-		return tika.detect(base64Encoded);
-		
+		byte[] base64encoded = Base64.getDecoder().decode(value);
+		return tika.detect(base64encoded);
 	}
+
+	public FileAttachment saveHoaxAttachment(MultipartFile multipartFile) {
+		String fileName = generateRandomName();
+		File target = new File(appConfiguration.getUploadPath() + "/" + fileName);
+		try {
+			OutputStream outputStream = new FileOutputStream(target);
+			outputStream.write(multipartFile.getBytes());
+			outputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		FileAttachment attachment = new FileAttachment();
+		attachment.setName(fileName);
+		attachment.setDate(new Date());
+		return fileAttachmentRepository.save(attachment);
+	}
+
 }

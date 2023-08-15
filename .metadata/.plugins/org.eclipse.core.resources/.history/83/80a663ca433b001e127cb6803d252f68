@@ -1,0 +1,25 @@
+package com.hoaxify.ws.file;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class FileCleanupService {
+	
+	@Autowired
+	FileAttachmentRepository fileAttachmentRepository;
+	
+	public void cleanupStorage() { //Database kaydedilmiş fakat herhangi bir hoax'a ait olmayan file'ları silme işlemi
+		Date twentyFourHoursAgo = new Date(System.currentTimeMillis() - (24*60*60*100));
+		List<FileAttachment> filesToBeDeleted = fileAttachmentRepository.findByDateBeforeAndHoaxIsNull(twentyFourHoursAgo);
+		for(FileAttachment file : filesToBeDeleted) {
+			//önce delete file
+			//sonra delete from table
+			
+		}
+	}
+	
+}
