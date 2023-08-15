@@ -2,6 +2,7 @@ package com.hoaxify.ws.hoax;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,6 +18,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
+import com.hoaxify.ws.file.FileAttachment;
+import com.hoaxify.ws.file.FileAttachmentRepository;
+import com.hoaxify.ws.hoax.vm.HoaxSubmitVM;
 import com.hoaxify.ws.user.User;
 import com.hoaxify.ws.user.UserService;
 
@@ -29,11 +33,24 @@ public class HoaxService {
 	@Autowired
 	UserService userService;
 	
+	@Autowired
+	FileAttachmentRepository fileAttachmentRepository;
+	
 
-	public void save(Hoax hoax,User user) {
+	public void save(HoaxSubmitVM hoaxSubmitVM,User user) {
+		Hoax hoax = new Hoax();
+		hoax.setContent(hoaxSubmitVM.getContent());
 		hoax.setTimestamp(new Date());
 		hoax.setUser(user);
 		hoaxRepository.save(hoax);	
+		//Hoax'ı oluşturduktan sonra diyoruz ki
+		Optional<FileAttachment> optionalFileAttachment = fileAttachmentRepository.findById(hoaxSubmitVM.getAttachmentId());
+		//Bu hoaxın attachment id'sini bi arat bakayım db ' de var mı? 
+		if(optionalFileAttachment.isPresent()) { //eğer varsa 
+			FileAttachment fileAttachment = optionalFileAttachment.get();
+			fileAttachment.setHoax(hoax);
+			fileAttachmentRepository.save(fileAttachment); //bu attachment'ın hoaxını bu hoax yap ve kaydet
+		}
 	}
 
 	public Page<Hoax> getHoaxes(Pageable page) {

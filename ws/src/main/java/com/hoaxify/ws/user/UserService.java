@@ -50,7 +50,7 @@ public class UserService {
 			//userInDB.setImage(updatedUser.getImage());
 			String storedFileName = fileService.writeBase64EncodedStringToFile(updatedUser.getImage());
 			userInDB.setImage(storedFileName);
-			fileService.deleteFile(oldImageName);
+			fileService.deleteProfileImage(oldImageName);
 		}
 		userInDB.setDisplayName(updatedUser.getDisplayName());
 		return userRepository.save(userInDB); //üstüne yazdı

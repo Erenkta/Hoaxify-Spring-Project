@@ -31,7 +31,7 @@ public class FileCleanupService {
 		for(FileAttachment file : filesToBeDeleted) {
 			log.info("Removing File : "+file.getName());
 			//önce delete file
-			fileService.deleteFile(file.getName());
+			fileService.deleteAttachmentImage(file.getName());
 			//sonra delete from table
 			fileAttachmentRepository.deleteById(file.getId());
 		}

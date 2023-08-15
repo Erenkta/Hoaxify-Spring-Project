@@ -11,4 +11,16 @@ import lombok.Data;
 //prefix sadece isim değişikliği yaml dosyasında artık hoaxify:upload-path diye tanımlı
 public class AppConfiguration {
 	private String uploadPath;
+	
+	private String profileStorage = "profile";
+	
+	private String attachmentStorage = "attachments";
+	
+	public String getProfileStoragePath() {
+		return uploadPath + "/" + profileStorage;
+	};
+	
+	public String getAttachmentStoragePath() {
+		return uploadPath + "/" + attachmentStorage;
+	};
 }

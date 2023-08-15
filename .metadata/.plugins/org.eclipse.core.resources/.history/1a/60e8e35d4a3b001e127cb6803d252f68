@@ -1,0 +1,12 @@
+package com.hoaxify.ws.file.vm;
+
+import lombok.Data;
+
+@Data
+public class FileAttachmentVM {
+	private String name;
+	
+	public FileAttachmentVM(String name) {
+		this.name = name;
+	}
+}
