@@ -1,0 +1,118 @@
+package com.hoaxify.ws.hoax;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.util.Streamable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.hoaxify.ws.file.FileAttachment;
+import com.hoaxify.ws.file.FileAttachmentRepository;
+import com.hoaxify.ws.hoax.vm.HoaxSubmitVM;
+import com.hoaxify.ws.user.User;
+import com.hoaxify.ws.user.UserService;
+
+@Service
+public class HoaxService {
+
+	@Autowired
+	HoaxRepository hoaxRepository;
+
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	FileAttachmentRepository fileAttachmentRepository;
+	
+
+	public void save(HoaxSubmitVM hoaxSubmitVM,User user) {
+		Hoax hoax = new Hoax();
+		hoax.setContent(hoaxSubmitVM.getContent());
+		hoax.setTimestamp(new Date());
+		hoax.setUser(user);
+		hoaxRepository.save(hoax);	
+		//Hoax'ı oluşturduktan sonra diyoruz ki
+		Optional<FileAttachment> optionalFileAttachment = fileAttachmentRepository.findById(hoaxSubmitVM.getAttachmentId());
+		//Bu hoaxın attachment id'sini bi arat bakayım db ' de var mı? 
+		if(optionalFileAttachment.isPresent()) { //eğer varsa 
+			FileAttachment fileAttachment = optionalFileAttachment.get();
+			fileAttachment.setHoax(hoax);
+			fileAttachmentRepository.save(fileAttachment); //bu attachment'ın hoaxını bu hoax yap ve kaydet
+		}
+	}
+
+	public Page<Hoax> getHoaxes(Pageable page) {
+		return hoaxRepository.findAll(page);
+	}
+
+	public Page<Hoax> getUserHoax(String username,Pageable page) {	
+		User inDB  = userService.getByUsername(username);
+		return hoaxRepository.findByUser(inDB, page);
+	}
+
+	public Page<Hoax> getOldHoaxes(long id, String username, Pageable page) {
+		Specification<Hoax> specification = idLessThan(id);
+		if(username != null) {
+			User inDb  = userService.getByUsername(username);
+			specification = specification.and(userIs(inDb));
+		}
+
+		return hoaxRepository.findAll(specification, page);
+		//return hoaxRepository.findByIdLessThan(id, page); specification'dan dolayı kaldırdık
+	
+	}
+
+	public long getNewHoaxesCount(long id, String username) {
+		Specification<Hoax> specification = idGreaterThan(id);
+		if(username !=null) {
+			User inDb = userService.getByUsername(username);
+			specification = specification.and(userIs(inDb));
+		}
+		return hoaxRepository.count(specification);
+	}
+
+
+	public List<Hoax> getNewHoaxes(long id, String username, Sort sort) {
+		Specification<Hoax> specification = idGreaterThan(id);
+		if(username !=null) {
+			User inDb = userService.getByUsername(username);
+			specification = specification.and(userIs(inDb));
+		}
+		return hoaxRepository.findAll(specification,sort);
+	}
+
+	
+	Specification<Hoax> idLessThan(long id){
+		return (root,query,criteriaBuilder)->{
+			return criteriaBuilder.lessThan(root.get("id"), id); //Query specification
+		};
+	}
+	Specification<Hoax> idGreaterThan(long id){
+		return (root,query,criteriaBuilder)->{
+			return criteriaBuilder.greaterThan(root.get("id"), id); //Query specification
+		};
+	}
+	Specification<Hoax> userIs(User user){
+		return (root,query,CriteriaBuilder)->{
+			return CriteriaBuilder.equal(root.get("user"),user);
+		};
+	}
+
+	public void delete(long id, User loggedInUser) {
+		Hoax hoax = hoaxRepository.findById(id);
+		hoaxRepository.deleteById(id);		
+	}
+}
