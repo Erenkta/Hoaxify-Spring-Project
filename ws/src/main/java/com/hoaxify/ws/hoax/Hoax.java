@@ -2,6 +2,7 @@ package com.hoaxify.ws.hoax;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,7 +38,7 @@ public class Hoax {
 	@ManyToOne
 	private User user;
 	
-	@OneToOne(mappedBy = "hoax" ) //bu demek ki fileAttachment'taki hoax kısmı bu ikili ilişkiyi yöneten kısım olacak 
+	@OneToOne(mappedBy = "hoax" ,cascade = CascadeType.REMOVE) //bu demek ki fileAttachment'taki hoax kısmı bu ikili ilişkiyi yöneten kısım olacak 
 	//burda şunu yapıyoruz. Diyoruz ki tamam karşılıklı yani bidirectional olsun ama tek bir entity üstüden yürüsün
 	//Yani bunu yapınca Hoax tablosuynda fileAttachment gözükmeyefcek ama aslında var olacak
 	

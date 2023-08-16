@@ -16,10 +16,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Streamable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.hoaxify.ws.file.FileAttachment;
 import com.hoaxify.ws.file.FileAttachmentRepository;
+import com.hoaxify.ws.file.FileService;
 import com.hoaxify.ws.hoax.vm.HoaxSubmitVM;
 import com.hoaxify.ws.user.User;
 import com.hoaxify.ws.user.UserService;
@@ -35,6 +37,9 @@ public class HoaxService {
 	
 	@Autowired
 	FileAttachmentRepository fileAttachmentRepository;
+	
+	@Autowired
+	FileService fileService;
 	
 
 	public void save(HoaxSubmitVM hoaxSubmitVM,User user) {
@@ -108,5 +113,15 @@ public class HoaxService {
 		return (root,query,CriteriaBuilder)->{
 			return CriteriaBuilder.equal(root.get("user"),user);
 		};
+	}
+
+	
+	public void delete(long id) {
+		Hoax hoaxInDb = hoaxRepository.getOne(id); //findBy yaptık çunku eminiz null değil
+		if(hoaxInDb.getFileAttachment() != null) {
+			String fileName = hoaxInDb.getFileAttachment().getName();
+			fileService.deleteAttachmentImage(fileName);
+		}
+		hoaxRepository.deleteById(id);		
 	}
 }
