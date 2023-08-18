@@ -32,8 +32,6 @@ public class HoaxService {
 	@Autowired
 	HoaxRepository hoaxRepository;
 
-	@Autowired
-	UserService userService;
 	
 	@Autowired
 	FileAttachmentRepository fileAttachmentRepository;
@@ -41,6 +39,8 @@ public class HoaxService {
 	@Autowired
 	FileService fileService;
 	
+	@Autowired
+	UserService userService;
 
 	public void save(HoaxSubmitVM hoaxSubmitVM,User user) {
 		Hoax hoax = new Hoax();
@@ -114,10 +114,9 @@ public class HoaxService {
 			return CriteriaBuilder.equal(root.get("user"),user);
 		};
 	}
-
 	
 	public void delete(long id) {
-		Hoax hoaxInDb = hoaxRepository.getOne(id); //findBy yaptık çunku eminiz null değil
+		Hoax hoaxInDb = hoaxRepository.getOne(id); //findBy yapmadık çunku eminiz null değil
 		if(hoaxInDb.getFileAttachment() != null) {
 			String fileName = hoaxInDb.getFileAttachment().getName();
 			fileService.deleteAttachmentImage(fileName);
