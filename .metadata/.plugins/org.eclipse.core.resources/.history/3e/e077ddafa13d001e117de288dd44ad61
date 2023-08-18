@@ -1,0 +1,30 @@
+package com.hoaxify.ws.auth;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.hoaxify.ws.user.User;
+import com.hoaxify.ws.user.UserService;
+
+@Service
+public class AuthService {
+	
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
+	public AuthResponse authenticate(Credentials credentials) {
+		User inDb = userService.getByUsername(credentials.getUsername());
+		boolean matches = passwordEncoder.matches(credentials.getPassword(), inDb.getPassword());
+		if(matches) {
+			
+		}
+		return null;
+	}
+	
+
+	
+}

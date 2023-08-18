@@ -1,0 +1,6 @@
+package com.hoaxify.ws.auth;
+
+@Service
+public class AuthService {
+
+}

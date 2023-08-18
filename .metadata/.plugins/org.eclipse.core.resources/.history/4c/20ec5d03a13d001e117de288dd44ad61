@@ -1,0 +1,21 @@
+package com.hoaxify.ws.auth;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hoaxify.ws.user.UserService;
+
+@Service
+public class AuthService {
+	
+	@Autowired
+	UserService userService;
+	
+	public AuthResponse authenticate(Credentials credentials) {
+		User inDb = userService.getByUsername(credentials.getUsername());
+		return null;
+	}
+	
+
+	
+}

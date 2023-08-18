@@ -1,0 +1,8 @@
+package com.hoaxify.ws.auth;
+
+public class AuthResponse {
+
+	private String token;
+	
+	
+}
