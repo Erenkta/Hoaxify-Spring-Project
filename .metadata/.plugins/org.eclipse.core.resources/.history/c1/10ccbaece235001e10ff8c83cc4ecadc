@@ -1,5 +1,0 @@
-package com.hoaxify.ws.hoax;
-
-public class HoaxRepository extends JpaRepository<Hoax,Long>{
-
-}

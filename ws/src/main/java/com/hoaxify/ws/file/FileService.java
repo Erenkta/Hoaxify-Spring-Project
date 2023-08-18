@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.tika.Tika;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hoaxify.ws.configuration.AppConfiguration;
+import com.hoaxify.ws.user.User;
 
 @Service
 public class FileService {
@@ -95,5 +97,14 @@ public class FileService {
 		attachment.setFileType(fileType);
 		return fileAttachmentRepository.save(attachment);
 	}
+
+	public void deleteAllStoredFilesForUser(User user) {
+		deleteProfileImage(user.getImage());
+		List<FileAttachment> filesToBeRemoved = fileAttachmentRepository.findByHoaxUser(user);
+		for(FileAttachment files : filesToBeRemoved) {
+			deleteAttachmentImage(files.getName());
+		}
+	}
+
 
 }
