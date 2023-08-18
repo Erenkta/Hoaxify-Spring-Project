@@ -1,0 +1,15 @@
+package com.hoaxify.ws.auth;
+
+import javax.persistence.Entity;
+
+import com.hoaxify.ws.user.User;
+
+@Entity
+public class Token {
+	
+	private String token;
+	
+	@ManyToOne //Birden fazla client açıp login olabilir ondan bu relation'u kullanacağız
+	private User user;
+	
+}

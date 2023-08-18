@@ -28,39 +28,34 @@ public class UserController {
 	UserService userService;
 	
 	@PostMapping("/users")
-	public GenericResponse createUser(@Valid @RequestBody User user) { //Request'ten body isterken RequestBody 
+	public GenericResponse createUser(@Valid @RequestBody User user) {		
 		userService.save(user);
 		return new GenericResponse("user created");
 	}
+	
 	@GetMapping("/users")
-	//@JsonView(Views.Base.class) Projection yapacağımdan dolayı comment out ettim
-	public Page<UserVM> getUsers( Pageable page ,@CurrentUser User user /*1*/)  { //URL'den parametre isterken RequestParam
-		return userService.getUsers(page,user).map(UserVM::new); //Bu sayede direkt constructor'u çağırmış oluyoruz  //METHOD REFERENCE
-				/*( (user) ->{
-			return new UserVM(user);
-		});*/
-		
+	Page<UserVM> getUsers(Pageable page, @CurrentUser User user){
+		return userService.getUsers(page, user).map(UserVM::new);
 	}
-	//@RequestParam int currentPage,@RequestParam(required = false, defaultValue = "3") int pageSize (1) de bunu yapmak yerine Pageable kullanıcaz Springe bırakıcaz işi
-
-	@GetMapping("users/{username}")
-	public UserVM getUser(@PathVariable String username) {
-		User user =userService.getByUsername(username); //Bu service'i başka yerlerde de kullanabiliriz ondan VM kullanmasak daha iyi olur
-		return new UserVM(user);
-		
-	}
-	@PutMapping("users/{username}")
-	@PreAuthorize("#username == principal.username") // SpEl ile yazacağız
-	UserVM updateUser(@Valid @RequestBody UserUpdateVM updatedUser,@PathVariable String username ) throws Exception {
-		User user = userService.updateUser(username,updatedUser);
+	
+	@GetMapping("/users/{username}")
+	UserVM getUser(@PathVariable String username) {
+		User user = userService.getByUsername(username);
 		return new UserVM(user);
 	}
-	@DeleteMapping("users/{username}")
-	@PreAuthorize("#username == principal.username") // SpEl ile yazacağız
+	
+	@PutMapping("/users/{username}")
+	@PreAuthorize("#username == principal.username")
+	UserVM updateUser(@Valid @RequestBody UserUpdateVM updatedUser, @PathVariable String username) {
+		User user = userService.updateUser(username, updatedUser);
+		return new UserVM(user);
+	}
+	
+	@DeleteMapping("/users/{username}")
+	@PreAuthorize("#username == principal.username")
 	GenericResponse deleteUser(@PathVariable String username) {
 		userService.deleteUser(username);
 		return new GenericResponse("User is removed");
 	}
-
-
+	
 }

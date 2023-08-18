@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.hoaxify.ws.auth.AuthService;
 
 public class TokenFilter extends OncePerRequestFilter {
+	
 	@Autowired
 	AuthService authService;
 
@@ -27,15 +27,18 @@ public class TokenFilter extends OncePerRequestFilter {
 
 		String authorization = request.getHeader("Authorization");
 		if(authorization != null) {
-			String token = authorization.substring(7);//7.karakterden sonrakileri al 0-1-2-3-4-5-6-7 !!!
-			UserDetails user = authService.getUserDetails(token); //Bulunan user'ı tutuyoruz
-			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
-			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			String token = authorization.substring(7);
+			
+			UserDetails user = authService.getUserDetails(token);
+			if(user != null) {				
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+			}
 		}
 		
-		
 		filterChain.doFilter(request, response);
+		
 	}
 
 }

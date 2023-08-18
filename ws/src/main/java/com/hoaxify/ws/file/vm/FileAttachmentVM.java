@@ -6,11 +6,14 @@ import lombok.Data;
 
 @Data
 public class FileAttachmentVM {
+	
 	private String name;
+	
 	private String fileType;
 	
-	public FileAttachmentVM(FileAttachment attachment) {
-		this.setName(attachment.getName());
-		this.fileType = attachment.getFileType();
+	public FileAttachmentVM(FileAttachment fileAttachment) {
+		this.setName(fileAttachment.getName());
+		this.fileType = fileAttachment.getFileType();
 	}
+
 }

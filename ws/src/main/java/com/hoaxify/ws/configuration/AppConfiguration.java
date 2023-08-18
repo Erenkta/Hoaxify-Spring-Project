@@ -7,9 +7,9 @@ import lombok.Data;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix="hoaxify")//Kendi config property'mizi oluşturduk 
-//prefix sadece isim değişikliği yaml dosyasında artık hoaxify:upload-path diye tanımlı
+@ConfigurationProperties(prefix = "hoaxify")
 public class AppConfiguration {
+
 	private String uploadPath;
 	
 	private String profileStorage = "profile";
@@ -18,9 +18,9 @@ public class AppConfiguration {
 	
 	public String getProfileStoragePath() {
 		return uploadPath + "/" + profileStorage;
-	};
+	}
 	
 	public String getAttachmentStoragePath() {
 		return uploadPath + "/" + attachmentStorage;
-	};
+	}
 }

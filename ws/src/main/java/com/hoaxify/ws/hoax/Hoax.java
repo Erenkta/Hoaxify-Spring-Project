@@ -8,12 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
 
 import com.hoaxify.ws.file.FileAttachment;
 import com.hoaxify.ws.user.User;
@@ -24,24 +22,18 @@ import lombok.Data;
 @Entity
 public class Hoax {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(length = 1000) //eğer string ise varsayılan 255 bunu 1000 e çektik ki max değer de düzgün çalışsın
-	private String content;	
+	@Column(length = 1000)
+	private String content;
 	
-	
-	@Temporal(TemporalType.DATE) // sadece tarih tutsun istedik 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
-	
+
 	@ManyToOne
 	private User user;
 	
-	@OneToOne(mappedBy = "hoax" ,cascade = CascadeType.REMOVE) //bu demek ki fileAttachment'taki hoax kısmı bu ikili ilişkiyi yöneten kısım olacak 
-	//burda şunu yapıyoruz. Diyoruz ki tamam karşılıklı yani bidirectional olsun ama tek bir entity üstüden yürüsün
-	//Yani bunu yapınca Hoax tablosuynda fileAttachment gözükmeyefcek ama aslında var olacak
-	
+	@OneToOne(mappedBy = "hoax", cascade = CascadeType.REMOVE)
 	private FileAttachment fileAttachment;
-	
 }

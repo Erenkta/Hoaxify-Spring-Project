@@ -13,24 +13,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer{
-	/*@Value("${upload-path}")
-	String uploadPath; Aynı şekilde kendimiz oluşturduğumuz class ile yapıcaz */
 	
 	@Autowired
 	AppConfiguration appConfiguration;
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		//http://localhost:8080/images/profile.png şeklinde görebileceğiz ve client üzerinden de buraya request atıcaz
 		registry.addResourceHandler("/images/**")
-		.addResourceLocations("file:./"+appConfiguration.getUploadPath()+"/")
-		.setCacheControl(CacheControl.maxAge(365,TimeUnit.DAYS));//Cache'e ekleme
+			.addResourceLocations("file:./"+appConfiguration.getUploadPath()+"/")
+			.setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS));
 	}
- /* fotoğraflara web sitesi üzerinden erişmeyi - eriştiğimiz dosyayı ya profil fotosuna koyabilmeyi sağladık*/
 	
 	@Bean
-	CommandLineRunner createStorageDirectories() { //Yine uygulama çalışırken compile zamanında çalışacak bir command yazdık
-		return (args) ->{
+	CommandLineRunner createStorageDirectories() {
+		return (args) -> {
 			createFolder(appConfiguration.getUploadPath());
 			createFolder(appConfiguration.getProfileStoragePath());
 			createFolder(appConfiguration.getAttachmentStoragePath());
@@ -38,10 +34,11 @@ public class WebConfiguration implements WebMvcConfigurer{
 	}
 
 	private void createFolder(String path) {
-		File folder = new File(path); //Amacımız fotoğrafları koyacağımız klasörü compile time'da oluşturmak
+		File folder = new File(path);
 		boolean folderExist = folder.exists() && folder.isDirectory();
 		if(!folderExist) {
 			folder.mkdir();
 		}
 	}
+
 }

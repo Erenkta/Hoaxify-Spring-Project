@@ -1,8 +1,5 @@
 package com.hoaxify.ws.file;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +14,6 @@ public class FileController {
 	@PostMapping("/api/1.0/hoax-attachments")
 	FileAttachment saveHoaxAttachment(MultipartFile file) {
 		return fileService.saveHoaxAttachment(file);
-	
 	}
 
 }

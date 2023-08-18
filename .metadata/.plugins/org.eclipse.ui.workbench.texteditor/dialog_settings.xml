@@ -6,8 +6,11 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="hoax"/>
+		<item key="selection" value=""/>
 		<list key="findhistory">
+			<item value="long"/>
+			<item value="com"/>
+			<item value="parse"/>
 			<item value="hoax"/>
 			<item value="delete"/>
 			<item value="save"/>

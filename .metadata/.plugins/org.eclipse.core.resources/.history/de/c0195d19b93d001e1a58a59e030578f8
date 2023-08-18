@@ -1,0 +1,80 @@
+package com.hoaxify.ws.auth;
+
+import java.util.UUID;
+
+import javax.transaction.Transactional;
+
+import org.hibernate.proxy.HibernateProxy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.hoaxify.ws.user.User;
+import com.hoaxify.ws.user.UserRepository;
+import com.hoaxify.ws.user.UserService;
+import com.hoaxify.ws.user.vm.UserVM;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+@Service
+public class AuthService {
+	
+	@Autowired
+	UserRepository userRepository;
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	TokenRepository tokenRepository;
+	
+	public AuthResponse authenticate(Credentials credentials) {
+		User inDb = userRepository.findByUsername(credentials.getUsername());
+		if(inDb==null) { //user yoksa
+			throw new AuthException();
+		}
+		boolean matches = passwordEncoder.matches(credentials.getPassword(), inDb.getPassword()); 
+		if(!matches) { //Şifreler eşleşmezse
+			throw new AuthException();
+		}
+		UserVM userVM = new UserVM(inDb);
+		String token = generateRandomToken();
+		Token tokenEntity = new Token();
+		tokenEntity.setToken(token);
+		AuthResponse response = new AuthResponse();
+		response.setToken(token);
+		response.setUser(userVM);
+		return response;
+
+	}
+
+	@Transactional //buradaki request sonlanana kadar data çekilebilir olucak
+	public UserDetails getUserDetails(String token) {
+		JwtParser parser = Jwts.parser().setSigningKey("my-app-secret");
+		try {
+			parser.parse(token);
+			Claims claims = parser.parseClaimsJws(token).getBody();
+			long userId = Long.parseLong(claims.getSubject());
+			User user = userRepository.getOne(userId); //Hibernate objesi olarak geliyor bunu halletmemiz lazım !! 
+			User realUser = (User)((HibernateProxy)user).getHibernateLazyInitializer().getImplementation();
+			return realUser; //By sayede hibernate proxy'den kurtuldu
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	public String generateRandomToken() {
+		return UUID.randomUUID().toString().replaceAll("-", "");
+	}
+
+	
+
+	
+}

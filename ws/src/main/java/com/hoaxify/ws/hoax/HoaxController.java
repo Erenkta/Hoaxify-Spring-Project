@@ -28,80 +28,56 @@ import com.hoaxify.ws.hoax.vm.HoaxVM;
 import com.hoaxify.ws.shared.CurrentUser;
 import com.hoaxify.ws.shared.GenericResponse;
 import com.hoaxify.ws.user.User;
-import com.hoaxify.ws.user.UserService;
 
 @RestController
 @RequestMapping("/api/1.0")
 public class HoaxController {
-
+	
 	@Autowired
 	HoaxService hoaxService;
-
-	
 	
 	@PostMapping("/hoaxes")
-	GenericResponse saveHoax(@Valid @RequestBody HoaxSubmitVM hoax,@CurrentUser User user) {
-		 hoaxService.save(hoax,user);
-		 return new GenericResponse("Hoax is saved");
+	GenericResponse saveHoax(@Valid @RequestBody HoaxSubmitVM hoax, @CurrentUser User user) {
+		hoaxService.save(hoax, user);
+		return new GenericResponse("Hoax is saved");
 	}
 	
 	@GetMapping("/hoaxes")
-	Page<HoaxVM> getHoaxes(@PageableDefault(sort="id",direction = Direction.DESC) Pageable page){ //Bazı page parametreleri için default değerler set etmek istersek bu annotation'u kullanıyoruz
+	Page<HoaxVM> getHoaxes(@PageableDefault(sort = "id", direction = Direction.DESC) Pageable page){
 		return hoaxService.getHoaxes(page).map(HoaxVM::new);
 	}
-	@GetMapping({"/hoaxes/{id:[0-9]+}","users/{username}/hoaxes/{id:[0-9]+}"}) //Response Entity Farklı tipler döneceği zaman kullanılır
-	ResponseEntity<?> getHoaxesRelative(@PageableDefault(sort="id",direction = Direction.DESC) Pageable page,
+	
+	@GetMapping({"/hoaxes/{id:[0-9]+}", "/users/{username}/hoaxes/{id:[0-9]+}"})  
+	ResponseEntity<?> getHoaxesRelative(@PageableDefault(sort = "id", direction = Direction.DESC) Pageable page,
 			@PathVariable long id,
-			@PathVariable(required = false) String username,
-			@RequestParam(name="count",required = false,defaultValue = "false") boolean count,
-			@RequestParam(name="direction",defaultValue="before")String direction){ //Bazı page parametreleri için default değerler set etmek istersek bu annotation'u kullanıyoruz
-		
+			@PathVariable(required=false) String username,
+			@RequestParam(name="count", required = false, defaultValue = "false") boolean count,
+			@RequestParam(name="direction", defaultValue = "before") String direction){
 		if(count) {
-			long newHoaxCount = hoaxService.getNewHoaxesCount(id,username);
-			Map<String,Long> response = new HashMap<>(); // Json'un javadaki karşılığı map aslında
+			long newHoaxCount = hoaxService.getNewHoaxesCount(id, username);
+			Map<String, Long> response = new HashMap<>();
 			response.put("count", newHoaxCount);
 			return ResponseEntity.ok(response);
 		}
-		if(direction.equalsIgnoreCase("after")) {
-			List<Hoax> newHoaxes = hoaxService.getNewHoaxes(id,username,page.getSort());
-			return ResponseEntity.ok(newHoaxes.stream()
-					.map(t -> new HoaxVM(t) ).collect(Collectors.toList()));
+		if(direction.equals("after")) {
+			List<HoaxVM> newHoaxes = hoaxService.getNewHoaxes(id, username, page.getSort())
+					.stream().map(HoaxVM::new).collect(Collectors.toList());
+			return ResponseEntity.ok(newHoaxes);
 		}
-		return ResponseEntity.ok(hoaxService.getOldHoaxes(id,username,page).map(HoaxVM::new));
+		
+		return ResponseEntity.ok(hoaxService.getOldHoaxes(id, username, page).map(HoaxVM::new));
 	}
-
-	@GetMapping("users/{username}/hoaxes")
-	Page<HoaxVM> getUserHoaxes(@PathVariable String username,@PageableDefault(sort="id",direction = Direction.DESC) Pageable page){ //Bazı page parametreleri için default değerler set etmek istersek bu annotation'u kullanıyoruz
-		return hoaxService.getUserHoax(username,page).map(HoaxVM::new);
+	
+	@GetMapping("/users/{username}/hoaxes") 
+	Page<HoaxVM> getUserHoaxes(@PathVariable String username, @PageableDefault(sort = "id", direction = Direction.DESC) Pageable page){
+		return hoaxService.getHoaxesOfUser(username, page).map(HoaxVM::new);
 	}
 	
 	@DeleteMapping("/hoaxes/{id:[0-9]+}")
-	@PreAuthorize("@hoaxSecurity.isAllowedToDelete(#id,principal)")
+	@PreAuthorize("@hoaxSecurity.isAllowedToDelete(#id, principal)")
 	GenericResponse deleteHoax(@PathVariable long id) {
 		hoaxService.delete(id);
-		return new GenericResponse("Delete success");
+		return new GenericResponse("Hoax removed");
 	}
 
-
-	/*
-	 * @GetMapping("users/{username}/hoaxes/{id:[0-9]+}") ResponseEntity<?>
-	 * getUserHoaxesRelative(@PathVariable long id,@PathVariable String
-	 * username,@PageableDefault(sort="id",direction = Direction.DESC) Pageable
-	 * page,
-	 * 
-	 * @RequestParam(name="count",required = false , defaultValue = "false") boolean
-	 * count,
-	 * 
-	 * @RequestParam(name="direction",defaultValue = "before") String direction){
-	 * //Bazı page parametreleri için default değerler set etmek istersek bu
-	 * annotation'u kullanıyoruz if(count) { long newHoaxCount =
-	 * hoaxService.getNewHoaxesCountOfUser(id,username); Map<String,Long> response =
-	 * new HashMap<>(); // Json'un javadaki karşılığı map aslındaL
-	 * response.put("count", newHoaxCount); return ResponseEntity.ok(response); }
-	 * if(direction.equalsIgnoreCase("after")) { List<Hoax> newHoaxes =
-	 * hoaxService.getNewUserHoaxes(id,page.getSort(),username); return
-	 * ResponseEntity.ok(newHoaxes.stream() .map(t -> new HoaxVM(t)
-	 * ).collect(Collectors.toList())); } return
-	 * ResponseEntity.ok(hoaxService.getOldHoaxes(id,page).map(HoaxVM::new)); }
-	 */
 }

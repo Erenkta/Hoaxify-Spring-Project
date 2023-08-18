@@ -11,11 +11,10 @@ import lombok.Data;
 public class UserUpdateVM {
 	
 	@NotNull
-	@Size(min = 4 , max =255)
+	@Size(min = 4, max=255)
 	private String displayName;
 	
-	
-	@FileType(types = {"jpeg","png"})
+	@FileType(types= {"jpeg", "png"})
 	private String image;
-	
+
 }
