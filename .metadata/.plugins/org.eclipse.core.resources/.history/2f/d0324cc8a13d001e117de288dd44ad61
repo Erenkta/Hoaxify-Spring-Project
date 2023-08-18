@@ -1,0 +1,35 @@
+package com.hoaxify.ws.auth;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.hoaxify.ws.user.User;
+import com.hoaxify.ws.user.UserService;
+import com.hoaxify.ws.user.vm.UserVM;
+
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Jwts;
+
+@Service
+public class AuthService {
+	
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
+	public AuthResponse authenticate(Credentials credentials) {
+		User inDb = userService.getByUsername(credentials.getUsername());
+		boolean matches = passwordEncoder.matches(credentials.getPassword(), inDb.getPassword());
+		if(matches) {
+			UserVM userVM = new UserVM(inDb);
+			String token = Jwts.builder().setSubject(""+inDb.getId()).signWith(SignatureAlgorithm.HS512, "my-app-secret").compact();
+		}
+		return null;
+	}
+	
+
+	
+}
